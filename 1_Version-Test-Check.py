@@ -28,6 +28,3 @@ print('tensorflow: %s' % tensorflow.__version__)
 # keras
 import keras
 print('keras: %s' % keras.__version__)
-# gym
-import gym
-print('gym install at: %s' % gym.version)
