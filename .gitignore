@@ -52,7 +52,3 @@ docker-compose.override.yml
 .env
 *.env
 config/settings_local.py
-
-# Experimental Path
-figure/
-result/
