@@ -10,11 +10,12 @@ from pandas import concat
 from pandas import read_csv
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import LSTM
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import LSTM
 from math import sqrt
 from matplotlib import pyplot
+import tensorflow as tf
 import numpy
 import time
 

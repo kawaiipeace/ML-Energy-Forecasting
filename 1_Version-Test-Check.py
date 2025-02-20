@@ -19,6 +19,9 @@ print('pandas: %s' % pandas.__version__)
 # statsmodels
 import statsmodels
 print('statsmodels: %s' % statsmodels.__version__)
+# openpyxl
+import openpyxl
+print('openpyxl: %s' % openpyxl.__version__)
 # scikit-learn
 import sklearn
 print('sklearn: %s' % sklearn.__version__)
