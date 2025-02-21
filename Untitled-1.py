@@ -64,8 +64,8 @@ def forecast_lstm(model, X):
 #### INITIALIZATION ####
 filename = Path("dataset/Bangkok_solarpv_Trial.csv")
 horizon = 372
-neurons = 10
-epochs = 100
+neurons = 100
+epochs = 1000
 batch_size = 1
 
 # Load dataset
