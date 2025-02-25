@@ -11,15 +11,19 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 ```bash
 choco install pyenv-win
 ```
-3. ทำการติดตั้ง python 3.12.9
+3. ทำการกำหนด Execution Policy เพื่อให้ใช้งาน pyenv ได้
 ```bash
-pyenv install 3.12.9
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
 ```
-4. ตั้งค่า Global Environment ให้ python เป็น 3.12.9
+4. ทำการติดตั้ง python 3.10.5
 ```bash
-pyenv global 3.12.9
+pyenv install 3.10.5
 ```
-5. ติดตั้ง Dependency สำหรับใช้ใน Project นี้
+5. ตั้งค่า Global Environment ให้ python เป็น 3.10.5
+```bash
+pyenv global 3.10.5
+```
+6. ติดตั้ง Dependency สำหรับใช้ใน Project นี้ ผ่าน Terminal ใน VSCode
 ```bash
 pip install -r requirements.txt
 ```
