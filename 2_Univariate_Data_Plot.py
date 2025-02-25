@@ -6,9 +6,12 @@ Last modified: 25/02/2025
 
 from pandas import read_csv
 from matplotlib import pyplot
+from datetime import datetime
+from pathlib import Path
 import numpy
 
 filename = 'dataset/Bangkok_solarpv_Trial.csv'
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 series = read_csv(filename, header=0, parse_dates=[0], index_col=0)
 raw_values = series.values
@@ -23,5 +26,5 @@ pyplot.title("Bangkok Solar PV")
 pyplot.xlabel("Data Point")
 pyplot.ylabel("Solar Irradiance (W/$m^2$)")
 pyplot.legend(loc="upper right")
-pyplot.savefig('./figure/2_Bangkok_solarpv_plot' + '.png', format='png', dpi=600)
+pyplot.savefig(Path(f"./figure/2_plot_{timestamp}.png"), dpi=600)
 pyplot.show()

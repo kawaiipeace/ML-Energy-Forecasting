@@ -8,6 +8,7 @@ Further Reading: https://shorturl.at/1jibR
 import time
 import numpy
 import tensorflow as tf
+from datetime import datetime
 from pandas import DataFrame
 from pandas import Series
 from pandas import concat
@@ -25,7 +26,8 @@ horizon = 372 # ค่าสเตปการพยากรณ์ ดูเพ
 neurons = 10 # ค่าโหนดสำหรับแบบจำลอง LSTM ปรับแก้ไขได้ตามชอบ (ค่าปกติคือ 10)
 epoch = 100 # ค่าการวนซ้ำสำหรับแบบจำลอง LSTM ปรับแก้ไขได้ตามชอบ (ค่าปกติคือ 100)
 batch_size = 32 # จำนวนข้อมูลสำหรับการปรับปรุงในช่วงการเรียนรู้ในแต่ละ epoch (ค่าปกติคือ 32)
-model_selection = "LSTM" # ให้เลือกโมเดลระหว่าง LSTM หรือ BiLSTM
+model_selection = "LSTM" # ให้เลือกโมเดลระหว่าง LSTM หรือ BiLSTM (ค่าปกติคือ LSTM)
+future_horizon = 0 # ค่าสเตปการพยากรณ์ในอนาคต ปรับแก้ไขมากกว่า 0 ถึงจะทำงาน (ค่าปกติ 0)
 
 # สร้างฟังก์ชั่น ทำข้อมูลเป็นเชิงลำดับให้กับแบบจำลอง Machine Learning
 def timeseries_to_supervised(data, lag=1):
@@ -97,6 +99,7 @@ def forecast_lstm(model, X):
 # โหลดข้อมูล
 print('\n======= Univariate Forecasting is in progress, PLEASE WAIT... =======\n')
 series = read_csv(filename, header=0, parse_dates=[0], index_col=0)
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
 # แปลงข้อมูลให้อยู่ในรูปแบบอนุกรมเวลาที่คงที่
 raw_values = series.values.flatten()
@@ -136,10 +139,10 @@ for i in range(len(test_scaled)):
 	# แปลงข้อมูลจากรูปนอร์มัลไลซ์ให้อยู่ในรูปปกติ
 	yhat = invert_scale(scaler, X, yhat)
 	# แปลงข้อมูลจากอนุกรมความต่างให้เป็นรูปแบบปกติ
-	yhat = inverse_difference(raw_values, yhat, len(test_scaled)+1-i)
+	yhat = inverse_difference(raw_values, yhat, len(test_scaled)-i)
 	# เก็บข้อมูลพยากรณ์
 	predictions.append(yhat)
-	expected = raw_values[len(train) + i + 1]
+	expected = raw_values[len(train) + i]
 	print(f"Point={i+1}, Predicted={yhat:.3f}, Expected={expected:.3f}")
 
 # คำนวณเวลาการทำงานของแบบจำลอง
@@ -160,17 +163,45 @@ print(f"Test R-Squared: {test_rsq:.3f}")
 # สร้างกราฟผลลัพธ์
 pyplot.plot(raw_values[-horizon:], label="Actual")
 pyplot.plot(predictions, label="Forecast", linestyle="dashed")
-pyplot.title("Bangkok Solar PV with LSTM Univariate Forecasting")
+pyplot.title("Univariate Forecasting")
 pyplot.xlabel("Data Point")
 pyplot.ylabel("Solar Irradiance (W/$m^2$)")
 pyplot.legend(loc="upper right")
-pyplot.savefig(Path("./figure/3_Univariate_Forecasting.png"), dpi=600)
+pyplot.savefig(Path(f"./figure/3_Univariate_Forecasting_{timestamp}.png"), dpi=600)
 pyplot.show()
 
 # เขียนผลลัพธ์ให้อยู่ในรูปแบบไฟล์ Excel
 predtoarray = numpy.array(predictions)
 outputdata = numpy.stack((raw_values[-horizon:], predtoarray), axis=1)
 out = DataFrame(outputdata.reshape(horizon,2), columns=['Actual','Predict'])
-out.to_excel(Path("./result/report_Bangkok_SolarPV.xlsx"), index=False, engine="openpyxl")
+out.to_excel(Path(f"./result/report_forecasting_{timestamp}.xlsx"), index=False, engine="openpyxl")
 
 print('\n======= Univariate Forecasting is COMPLETED =======\n')
+
+# ส่วนการพยากรณ์ข้อมูลในอนาคต (ไม่มีการเปรียบเทียบข้อมูลจริง)
+if future_horizon > 0:
+	print('\n======= Future Step Forecasting is in progress, PLEASE WAIT... =======\n')
+	future_predictions = []
+	X = test_scaled[0, :-1]
+
+	for i in range(future_horizon):
+		yhat = forecast_lstm(lstm_model, X)
+		yhat = invert_scale(scaler, X, yhat)
+		yhat = inverse_difference(raw_values, yhat, future_horizon - i)
+		future_predictions.append(yhat)
+		X = numpy.roll(X, -1)
+		X[-1] = yhat
+	future_predictions = numpy.array(future_predictions)
+
+	pyplot.plot(future_predictions, label="Multi-Step Forecast", linestyle="dashed")
+	pyplot.title("Future-Step Forecasting")
+	pyplot.xlabel("Data Point")
+	pyplot.ylabel("Solar Irradiance (W/$m^2$)")
+	pyplot.legend(loc="upper right")
+	pyplot.savefig(Path(f"./figure/3_future_step_forecast_{timestamp}.png"), dpi=600)
+	pyplot.show()
+
+	out = DataFrame(future_predictions, columns=['Future-Step Forecast'])
+	out.to_excel(Path(f"./result/future_step_forecast_{timestamp}.xlsx"), index=False, engine="openpyxl")
+
+	print('\n======= Future Step Forecasting is COMPLETED =======\n')
