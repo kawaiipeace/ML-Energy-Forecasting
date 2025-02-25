@@ -31,7 +31,7 @@ pip install -r requirements.txt
 ## ในไฟล์ประกอบด้วย
 * ไฟล์ *1_Version-Test-Check.py* ใช้สำหรับตรวจสอบ Version ของ Library ต่าง ๆ ว่ามีครบแล้วหรือไม่
 * ไฟล์ *2_Univariate_Data_Plot.py* ใช้สำหรับพล็อตกราฟค่าที่จะนำไป Train และ Test ของไฟล์นั้น ๆ
-* ไฟล์ *3_LSTM-Univariate.py* ใช้สำหรับรันโมเดล LSTM พยากรณ์หาค่าพลังงานไฟฟ้า
+* ไฟล์ *3_LSTM-Univariate.py* ใช้สำหรับรันโมเดล LSTM หรือ BiLSTM เพื่อพยากรณ์ข้อมูล
 
 ##### โฟลเดอร์ที่เก็บไฟล์
 * โฟลเดอร์ *dataset* ไว้สำหรับเก็บชุดข้อมูลที่จะรัน
@@ -42,8 +42,10 @@ pip install -r requirements.txt
 > แก้ไขบรรทัดที่ 23-28
 
 ```python
-filename = 'dataset/Bangkok_solarpv_Trial.csv' # ชื่อไฟล์ที่จะนำมาพยากรณ์
+filename = Path('dataset/Bangkok_solarpv_Trial.csv') # ชื่อไฟล์ที่จะนำมาพยากรณ์
 horizon = 372 # ค่าสเตปการพยากรณ์ ดูเพิ่มเติมได้จาก dataset details.pdf
 neurons = 10 # ค่าโหนดสำหรับแบบจำลอง LSTM ปรับแก้ไขได้ตามชอบ (ค่าปกติคือ 10)
 epoch = 100 # ค่าการวนซ้ำสำหรับแบบจำลอง LSTM ปรับแก้ไขได้ตามชอบ (ค่าปกติคือ 100)
+batch_size = 32 # จำนวนข้อมูลสำหรับการปรับปรุงในช่วงการเรียนรู้ในแต่ละ epoch (ค่าปกติคือ 32)
+model_selection = "LSTM" # ให้เลือกโมเดลระหว่าง LSTM หรือ BiLSTM
 ```
