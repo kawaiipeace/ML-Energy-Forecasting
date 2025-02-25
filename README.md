@@ -39,7 +39,7 @@ pip install -r requirements.txt
 * โฟลเดอร์ *result* ไว้เก็บผลลัพธ์ที่ได้จากการรัน
 
 ##### สำหรับไฟล์ *3_LSTM-Univariate.py*
-> แก้ไขบรรทัดที่ 23-28
+> แก้ไขบรรทัดที่ 24-30
 
 ```python
 filename = Path('dataset/Bangkok_solarpv_Trial.csv') # ชื่อไฟล์ที่จะนำมาพยากรณ์
